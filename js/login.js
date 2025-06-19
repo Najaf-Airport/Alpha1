@@ -1,6 +1,6 @@
 // ملف: js/login.js
 
-// تأكد أن firebase-init.js تم تحميله قبل هذا الملف
+// تأكد أن firebase-init.js تم تحميله قبل هذا الملف في الـ HTML
 // (Firebase-init.js يجب أن يحتوي على تهيئة Firebase وتعيين 'auth' كمتغير عام)
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -28,8 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error("Error logging in:", error);
+                console.log("Full error object:", error); // **هذا السطر يساعد في Debugging**
                 messageDiv.className = 'message error-message';
-                messageDiv.textContent = 'خطأ في تسجيل الدخول: ' + error.message;
+                messageDiv.textContent = 'خطأ في تسجيل الدخول: ' + (error.message || 'حدث خطأ غير معروف.');
             }
         });
     }
