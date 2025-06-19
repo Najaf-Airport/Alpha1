@@ -1,25 +1,35 @@
 // ملف: js/firebase-init.js
 
-// تهيئة Firebase
-// تأكد من استبدال هذه القيم بقيم مشروعك الخاصة من Firebase Console
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY", // <--- استبدل هذا
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com", // <--- استبدل هذا
-    projectId: "YOUR_PROJECT_ID", // <--- استبدل هذا
-    storageBucket: "YOUR_PROJECT_ID.appspot.com", // <--- استبدل هذا
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // <--- استبدل هذا
-    appId: "YOUR_APP_ID" // <--- استبدل هذا
+  apiKey: "AIzaSyAiU4-PvYgqnWbVLgISz73P9D4HaSIhW-o", // قيمتك الخاصة
+  authDomain: "abcd-3b894.firebaseapp.com", // قيمتك الخاصة
+  projectId: "abcd-3b894", // قيمتك الخاصة
+  storageBucket: "abcd-3b894.firebasestorage.app", // قيمتك الخاصة
+  messagingSenderId: "41388459465", // قيمتك الخاصة
+  appId: "1:41388459465:web:9c67ef67f0ad4810e55418" // قيمتك الخاصة
 };
 
-// قم بتهيئة Firebase
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 // قم بتهيئة خدمات Firebase التي ستستخدمها
-const auth = firebase.auth();
-const db = firebase.firestore();
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// لكي تكون المتغيرات 'auth' و 'db' متاحة عالمياً للملفات الأخرى
+window.auth = auth;
+window.db = db;
 
 // تمكين وضع عدم الاتصال بالإنترنت (اختياري، ولكن يفضل)
-// db.enablePersistence()
+// إذا أردت تمكين هذا، قم بإزالة التعليق من السطر التالي
+// import { enablePersistence } from "firebase/firestore";
+// enablePersistence(db)
 //     .catch(err => {
 //         if (err.code == 'failed-precondition') {
 //             console.warn('Persistence not enabled: Multiple tabs open, persistence can only be enabled in one.');
