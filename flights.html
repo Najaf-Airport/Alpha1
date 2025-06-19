@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرحلات - مطار النجف</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="header">
+        <img src="images/logo.png" alt="شعار مطار النجف" class="logo-small">
+        <div class="user-info">
+            مرحباً بك، <span id="userNameDisplay"></span>!
+            <button id="logoutBtn" class="logout-btn">تسجيل الخروج</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>إدخال بيانات الرحلات</h2>
+        <div id="flightFormsContainer" class="flight-forms-container">
+            </div>
+
+        <button id="saveFlightsBtn" class="save-btn">حفظ وتصدير الرحلات</button>
+
+        <h2 style="margin-top: 40px;">رحلاتك السابقة لهذا الشهر</h2>
+        <div id="noPreviousFlights" class="message error-message" style="display: none;">لا توجد رحلات محفوظة لهذا الشهر.</div>
+        <div id="previousFlightsList" class="previous-flights-list">
+            </div>
+
+        <p class="copyright">&copy; 2025 جميع الحقوق محفوظة.</p>
+        <div class="settings-icon">
+            <a href="admin.html" title="لوحة تحكم المسؤول"><img src="images/settings.png" alt="الإعدادات"></a>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="js/firebase-init.js"></script>
+    <script src="js/flights.js"></script>
+</body>
+</html>
