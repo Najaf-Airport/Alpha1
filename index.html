@@ -31,7 +31,7 @@
         }
         .form-group {
             margin-bottom: 15px;
-            text-align: right; /* لمحاذاة التسميات لليمين */
+            text-align: right;
         }
         .form-group label {
             display: block;
@@ -41,15 +41,15 @@
         }
         .form-group input[type="email"],
         .form-group input[type="password"] {
-            width: calc(100% - 20px); /* Adjust width for padding */
+            width: calc(100% - 20px);
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
-            box-sizing: border-box; /* Include padding in element's total width and height */
+            box-sizing: border-box;
         }
         .btn {
-            background-color: #28a745; /* لون أخضر */
+            background-color: #28a745;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -60,7 +60,7 @@
             margin-top: 20px;
         }
         .btn:hover {
-            background-color: #218838; /* لون أخضر أغمق عند التحويم */
+            background-color: #218838;
         }
         .message {
             margin-top: 20px;
@@ -100,13 +100,9 @@
         <div id="message" class="message"></div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script type="module" src="js/firebase-init.js"></script>
 
-    <script src="js/firebase-init.js"></script>
-
-    <script src="js/login.js"></script>
+    <script type="module" src="js/login.js"></script>
 
     </body>
 </html>
