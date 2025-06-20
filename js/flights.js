@@ -1,52 +1,48 @@
 // ملف: js/flights.js
 
-// تأكد أن firebase-init.js تم تحميله قبل هذا الملف في الـ HTML
-// (Firebase-init.js يجب أن يحتوي على تهيئة Firebase وتعيين 'auth' و 'db' كمتغيرات عامة)
+// استيراد auth و db من firebase-init.js
+import { auth, db } from "./firebase-init.js";
+import { doc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"; // قم باستيراد doc إذا كنت تستخدمها بشكل مباشر
 
 // دالة لمطابقة تنسيق الشهر (بإضافة صفر بادئ إذا كان أقل من 10)
 function formatMonth(month) {
     return month < 10 ? `0${month}` : `${month}`;
 }
 
-let currentUserName = localStorage.getItem('userName'); // محاولة استعادة الاسم
+let currentUserName = localStorage.getItem('userName');
 let currentUserEmail = '';
 
-// التحقق من حالة المصادقة عند تحميل الصفحة
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUserEmail = user.email;
         if (!currentUserName) {
-            // طلب الاسم إذا لم يكن محفوظًا
             currentUserName = prompt('الرجاء إدخال اسمك (سيتم حفظه تلقائياً):');
             if (currentUserName) {
                 localStorage.setItem('userName', currentUserName);
             } else {
                 alert('يجب إدخال الاسم للمتابعة.');
-                auth.signOut(); // تسجيل الخروج إذا لم يدخل الاسم
-                window.location.href = 'index.html'; // أو login.html
+                auth.signOut();
+                window.location.href = 'index.html';
                 return;
             }
         }
-        // تأكد من وجود العنصر قبل محاولة الوصول إليه
         const userNameDisplay = document.getElementById('userNameDisplay');
         if (userNameDisplay) {
             userNameDisplay.textContent = currentUserName;
         }
-        renderFlightForms(); // عرض بطاقات الرحلات (5 بطاقات فارغة)
-        loadPreviousFlights(user.uid); // تحميل الرحلات السابقة لهذا المستخدم
+        renderFlightForms();
+        loadPreviousFlights(user.uid);
     } else {
-        // إذا لم يكن المستخدم مسجلاً للدخول، أعد التوجيه لصفحة تسجيل الدخول
-        window.location.href = 'index.html'; // أو login.html
+        window.location.href = 'index.html';
     }
 });
 
-// زر تسجيل الخروج
 const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
         auth.signOut().then(() => {
-            localStorage.removeItem('userName'); // مسح الاسم عند تسجيل الخروج
-            window.location.href = 'index.html'; // أو login.html
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
         }).catch(error => {
             console.error("Error signing out:", error);
             alert("حدث خطأ أثناء تسجيل الخروج.");
@@ -54,8 +50,6 @@ if (logoutBtn) {
     });
 }
 
-
-// دالة لإنشاء بطاقة رحلة
 function createFlightCard(index) {
     const card = document.createElement('div');
     card.classList.add('flight-card');
@@ -117,18 +111,16 @@ function createFlightCard(index) {
     return card;
 }
 
-// دالة لعرض 5 بطاقات رحلات
 function renderFlightForms() {
     const container = document.getElementById('flightFormsContainer');
     if (container) {
-        container.innerHTML = ''; // مسح أي بطاقات سابقة
+        container.innerHTML = '';
         for (let i = 0; i < 5; i++) {
             container.appendChild(createFlightCard(i));
         }
     }
 }
 
-// دالة لحفظ الرحلات في Firestore
 const saveFlightsBtn = document.getElementById('saveFlightsBtn');
 if (saveFlightsBtn) {
     saveFlightsBtn.addEventListener('click', async () => {
@@ -139,16 +131,13 @@ if (saveFlightsBtn) {
         }
 
         const userId = user.uid;
-        const currentMonth = new Date().getMonth() + 1; // الشهر الحالي (1-12)
+        const currentMonth = new Date().getMonth() + 1;
         const currentYear = new Date().getFullYear();
         const flightData = [];
-        let hasAtLeastOneValidFlight = false; // علم للتحقق من وجود رحلة واحدة على الأقل ببيانات إلزامية
+        let hasAtLeastOneValidFlight = false;
 
-        // تهيئة اسم الوثيقة للشهر والسنة ليتطابق مع Firestore (مثال: 2025-06)
         const monthYearDocId = `${currentYear}-${formatMonth(currentMonth)}`;
 
-
-        // جمع بيانات الرحلات من البطاقات
         for (let i = 0; i < 5; i++) {
             const dateInput = document.getElementById(`date-${i}`);
             const fltNoInput = document.getElementById(`fltNo-${i}`);
@@ -164,9 +153,8 @@ if (saveFlightsBtn) {
             const nameInput = document.getElementById(`name-${i}`);
             const notesInput = document.getElementById(`notes-${i}`);
 
-            // تأكد أن جميع العناصر موجودة قبل قراءة قيمها
-            const date = dateInput ? dateInput.value.trim() : ''; // استخدام .trim() لإزالة المسافات البيضاء
-            const fltNo = fltNoInput ? fltNoInput.value.trim() : ''; // استخدام .trim()
+            const date = dateInput ? dateInput.value.trim() : '';
+            const fltNo = fltNoInput ? fltNoInput.value.trim() : '';
             const onChocksTime = onChocksTimeInput ? onChocksTimeInput.value : '';
             const openDoorTime = openDoorTimeInput ? openDoorTimeInput.value : '';
             const startCleaningTime = startCleaningTimeInput ? startCleaningTimeInput.value : '';
@@ -176,16 +164,13 @@ if (saveFlightsBtn) {
             const completeBoardingTime = completeBoardingTimeInput ? completeBoardingTimeInput.value : '';
             const closeDoorTime = closeDoorTimeInput ? closeDoorTimeInput.value : '';
             const offChocksTime = offChocksTimeInput ? offChocksTimeInput.value : '';
-            const name = nameInput ? nameInput.value.trim() : ''; // استخدام .trim()
+            const name = nameInput ? nameInput.value.trim() : '';
             const notes = notesInput ? notesInput.value.trim() : '';
 
-            // **التحقق من الحقول الإلزامية:**
-            // إذا كانت جميع الحقول الأساسية فارغة، تجاهل هذه البطاقة تمامًا (لا حاجة لملئها)
             if (!date && !fltNo && !name) {
                 continue;
             }
 
-            // إذا كان أي من الحقول الإلزامية مفقودًا، قم بتنبيه المستخدم وأوقف الحفظ
             if (!date) {
                 alert(`الرحلة رقم ${i + 1}: حقل "التاريخ" إجباري.`);
                 return;
@@ -199,7 +184,6 @@ if (saveFlightsBtn) {
                 return;
             }
 
-            // إذا وصلت إلى هنا، فهذا يعني أن الرحلة تحتوي على جميع البيانات الإلزامية
             hasAtLeastOneValidFlight = true;
             flightData.push({
                 date: date,
@@ -215,11 +199,10 @@ if (saveFlightsBtn) {
                 offChocksTime: offChocksTime,
                 name: name,
                 notes: notes,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp() // وقت إضافة الرحلة
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
         }
 
-        // إذا لم يتم إدخال أي رحلة صالحة (كاملة الحقول الإلزامية)
         if (!hasAtLeastOneValidFlight) {
             alert('الرجاء إدخال بيانات كاملة (التاريخ، رقم الرحلة، الاسم) لرحلة واحدة على الأقل لحفظ البيانات.');
             return;
@@ -228,21 +211,15 @@ if (saveFlightsBtn) {
         try {
             for (let i = 0; i < flightData.length; i++) {
                 const data = flightData[i];
-                // إنشاء معرّف فريد للمستند لتجنب التكرار
-                // استخدام replace(/[^a-zA-Z0-9]/g, '_') لإزالة أي محارف غير صالحة من رقم الرحلة
-                // هذا النمط الأكثر أمانًا لاستبدال أي شيء ليس حرفًا أو رقمًا
                 const safeFltNo = (data.fltNo || 'NoFLT').replace(/[^a-zA-Z0-9]/g, '_');
                 const docId = `${data.date}_${safeFltNo}_${new Date().getTime()}_${i}`;
 
-
-                await db.collection('months').doc(monthYearDocId) // استخدام التنسيق الجديد
+                await db.collection('months').doc(monthYearDocId)
                           .collection('users').doc(userId)
                           .collection('flights').doc(docId).set(data);
             }
             alert('تم حفظ الرحلات بنجاح!');
-            // بعد الحفظ، أعد تحميل الرحلات السابقة
             loadPreviousFlights(userId);
-            // قم بتنظيف الحقول بعد الحفظ
             renderFlightForms();
 
         } catch (error) {
@@ -252,33 +229,30 @@ if (saveFlightsBtn) {
     });
 }
 
-
-// دالة لتحميل وعرض الرحلات السابقة للمستخدم في الشهر الحالي
 async function loadPreviousFlights(userId) {
     const previousFlightsList = document.getElementById('previousFlightsList');
-    const noPreviousFlightsMsg = document.getElementById('noPreviousFlights'); // جلب العنصر
+    const noPreviousFlightsMsg = document.getElementById('noPreviousFlights');
 
-    if (previousFlightsList) previousFlightsList.innerHTML = ''; // مسح القائمة السابقة
-    if (noPreviousFlightsMsg) noPreviousFlightsMsg.style.display = 'block'; // أظهر رسالة "لا توجد" بشكل افتراضي
+    if (previousFlightsList) previousFlightsList.innerHTML = '';
+    if (noPreviousFlightsMsg) noPreviousFlightsMsg.style.display = 'block';
 
     const currentMonth = new Date().getMonth() + 1;
     const currentYear = new Date().getFullYear();
 
-    // تهيئة اسم الوثيقة للشهر والسنة ليتطابق مع Firestore (مثال: 2025-06)
     const monthYearDocId = `${currentYear}-${formatMonth(currentMonth)}`;
 
     try {
-        const snapshot = await db.collection('months').doc(monthYearDocId) // استخدام التنسيق الجديد
+        const snapshot = await db.collection('months').doc(monthYearDocId)
                                 .collection('users').doc(userId)
                                 .collection('flights')
-                                .orderBy('timestamp', 'desc') // عرض الأحدث أولاً
+                                .orderBy('timestamp', 'desc')
                                 .get();
 
         if (snapshot.empty) {
-            if (noPreviousFlightsMsg) noPreviousFlightsMsg.style.display = 'block'; // إذا كانت فارغة، أظهر الرسالة
+            if (noPreviousFlightsMsg) noPreviousFlightsMsg.style.display = 'block';
             return;
         }
-        if (noPreviousFlightsMsg) noPreviousFlightsMsg.style.display = 'none'; // إذا كان هناك بيانات، أخفِ الرسالة
+        if (noPreviousFlightsMsg) noPreviousFlightsMsg.style.display = 'none';
 
         if (previousFlightsList) {
             snapshot.forEach(doc => {
@@ -300,6 +274,6 @@ async function loadPreviousFlights(userId) {
         if (previousFlightsList) {
             previousFlightsList.innerHTML = `<p style="color:red;">خطأ في تحميل الرحلات السابقة: ${error.message}</p>`;
         }
-        if (noPreviousFlightsMsg) noPreviousFlightsMsg.style.display = 'none'; // أخفِ رسالة "لا توجد" إذا كان هناك خطأ
+        if (noPreviousFlightsMsg) noPreviousFlightsMsg.style.display = 'none';
     }
 }
