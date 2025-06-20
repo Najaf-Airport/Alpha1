@@ -1,9 +1,9 @@
 // ملف: js/firebase-init.js
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import { getFirestore, enablePersistence } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,18 +22,15 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// لكي تكون المتغيرات 'auth' و 'db' متاحة عالمياً للملفات الأخرى
-window.auth = auth;
-window.db = db;
-
 // تمكين وضع عدم الاتصال بالإنترنت (اختياري، ولكن يفضل)
-// إذا أردت تمكين هذا، قم بإزالة التعليق من السطر التالي
-// import { enablePersistence } from "firebase/firestore";
-// enablePersistence(db)
-//     .catch(err => {
-//         if (err.code == 'failed-precondition') {
-//             console.warn('Persistence not enabled: Multiple tabs open, persistence can only be enabled in one.');
-//         } else if (err.code == 'unimplemented') {
-//             console.warn('Persistence not enabled: The current browser does not support all of the features.');
-//         }
-//     });
+enablePersistence(db)
+    .catch(err => {
+        if (err.code == 'failed-precondition') {
+            console.warn('Persistence not enabled: Multiple tabs open, persistence can only be enabled in one.');
+        } else if (err.code == 'unimplemented') {
+            console.warn('Persistence not enabled: The current browser does not support all of the features.');
+        }
+    });
+
+// قم بتصدير auth و db ليتم استيرادها في ملفات JS الأخرى
+export { auth, db };
