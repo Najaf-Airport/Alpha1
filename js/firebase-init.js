@@ -3,7 +3,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { getFirestore, enablePersistence } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+// تعديل هنا: استيراد getFirestore و enablePersistence من مساراتها الصحيحة
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { enablePersistence } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore/lite.js"; // <-- هذا هو التغيير الأساسي
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -23,6 +25,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // تمكين وضع عدم الاتصال بالإنترنت (اختياري، ولكن يفضل)
+// الآن enablePersistence ستكون متاحة بشكل صحيح
 enablePersistence(db)
     .catch(err => {
         if (err.code == 'failed-precondition') {
